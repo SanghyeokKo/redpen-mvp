@@ -173,8 +173,8 @@ def build_graph(ctx: Context):
                 continue
             verdicts[cid] = {"claim_id": cid, "verdict": "영향 없음", "rule": "R0", "evidence_ids": [],
                              "support_groups": [], "contra_groups": [], "revision": None, "needs_more": False,
-                             "reason": ("판단 연결 지도에서 이번 공시와 이어진 경로 없음" if c["topic"]
-                                        else "6개 주장 유형에 해당하지 않는 문장 (연결 지도 미연결)")}
+                             "reason": ("판단 연결 지도에서 이번 공시와 이어진 경로가 없습니다." if c["topic"]
+                                        else "6개 주장 유형에 해당하지 않는 문장이라 판단 연결 지도에 연결되지 않았습니다.")}
         by_doc: dict[str, int] = {}
         for cid in hits:
             by_doc[ctx.claims[cid]["doc_id"]] = by_doc.get(ctx.claims[cid]["doc_id"], 0) + 1
@@ -262,7 +262,7 @@ def build_graph(ctx: Context):
             v["attempts"] = state["attempts"].get(cid, 0)
             if v["needs_more"] and over:
                 v["needs_more"] = False
-                v["reason"] += " — 시간 한도 도달로 재탐색 중단"
+                v["reason"] += " 시간 한도에 도달해 재탐색을 멈췄습니다."
                 unfinished.append(cid)
             if v["needs_more"]:
                 pending.append(cid)

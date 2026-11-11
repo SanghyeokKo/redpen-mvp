@@ -86,9 +86,13 @@ def claim_cik(metric):
     return _CIK.get(metric["ticker"], "")
 
 
+_NAME_KO: dict[str, str] = {}
+
+
 def register_ciks(store: Store):
     for t, c in store.companies.items():
         _CIK[t] = c["cik"]
+        _NAME_KO[t] = c["name_ko"]
 
 
 # ---------------------------------------------------------------- 판정 (Judge)
@@ -113,39 +117,46 @@ def judge_claim(claim: dict, evidence: list[dict], attempts: int, excluded: set)
 
     if not ev:
         v["needs_more"] = attempts < MAX_ATTEMPTS
-        return {**v, "verdict": "확인 필요", "rule": "R4e", "reason": f"{attempts}차 탐색까지 근거 없음" + (" — 재탐색 3회 후 종료" if attempts >= MAX_ATTEMPTS else "")}
+        return {**v, "verdict": "확인 필요", "rule": "R4e", "reason": f"{attempts}차 탐색까지 근거를 찾지 못했습니다." + (" 재탐색 3회를 마쳐 담당자에게 넘깁니다." if attempts >= MAX_ATTEMPTS else "")}
     if t.interpretive or (not sup and not con):
         return {**v, "verdict": "확인 필요", "rule": "R4d",
-                "reason": f"{t.label}은(는) 해석이 필요한 판단 — 관련 근거 {len(neu)}건을 정리해 담당자에게 전달"}
+                "reason": f"{t.label}은(는) 해석이 필요한 판단이라, 관련 근거 {len(neu)}건을 정리해 담당자에게 넘깁니다."}
     if sup and con:
-        return {**v, "verdict": "확인 필요", "rule": "R4c", "reason": f"근거가 엇갈림 (같은 방향 {len(sup)}건 · 반대 {len(con)}건)"}
+        return {**v, "verdict": "확인 필요", "rule": "R4c", "reason": f"근거가 엇갈립니다. 같은 방향 {len(sup)}건, 반대 방향 {len(con)}건입니다."}
     if sup:
         return {**v, "verdict": "유지", "rule": "R2",
-                "reason": f"공시가 문장의 전제와 같은 방향 — 독립 근거 {len(sup)}건 추가 (근거 강화)"}
+                "reason": f"공시가 문장의 전제와 같은 방향입니다. 독립된 근거 {len(sup)}건을 더해 근거를 보강했습니다."}
     # 여기부터 반대 근거만 있는 경우
     if claim["modality"] == "forecast":
         return {**v, "verdict": "확인 필요", "rule": "R4b",
-                "reason": f"전망 문장 — 최신 공시는 반대 방향 근거 {len(con)}건. 전망·결론은 담당자 판단"}
+                "reason": f"전망 문장이라 담당자가 판단합니다. 최신 공시에는 반대 방향 근거가 {len(con)}건 있습니다."}
     # 사실 전제를 뒤집는 근거는 '사실·계산값'만 센다 (경영진 전망 문장은 가설)
     con_fact = {group_key(e) for e in ev if e["stance"] == -1 and not e.get("forward_looking")}
     v["contra_fact_groups"] = sorted(con_fact)
     if len(con_fact) >= 2:
         return {**v, "verdict": "수정", "rule": "R3",
-                "reason": f"사실 전제가 공시와 반대 — 서로 독립된 근거 {len(con_fact)}건 "
-                          f"({', '.join(_group_name(g) for g in sorted(con_fact))})"}
+                "reason": f"사실 전제가 공시와 반대입니다. 서로 독립된 근거 {len(con_fact)}건: "
+                          f"{', '.join(_group_name(g, ev) for g in sorted(con_fact))}."}
     if con - con_fact:
         return {**v, "verdict": "확인 필요", "rule": "R4b",
-                "reason": "반대 근거 일부가 가이던스·경영진 전망(가설) — 해석 여지"}
+                "reason": "반대 근거 일부가 가이던스나 경영진 전망(가설)이라 해석의 여지가 있습니다."}
     v["needs_more"] = attempts < MAX_ATTEMPTS
-    why = "반대 근거가 1건뿐 (독립 근거 2건 미만)"
+    why = "반대 근거가 1건뿐이라 고치지 않았습니다 (수정에는 독립 근거 2건 필요)."
     if attempts >= MAX_ATTEMPTS:
-        why += f" — 재탐색 {attempts}회 후 종료"
+        why += f" 재탐색 {attempts}회를 마쳐 담당자에게 넘깁니다."
     return {**v, "verdict": "확인 필요", "rule": "R4a", "reason": why}
 
 
-def _group_name(g: str) -> str:
+def _group_name(g: str, ev: list[dict] | None = None) -> str:
+    """독립 근거 묶음을 사람이 읽는 이름으로: 'text:0001045810-…' → '엔비디아 10-Q 본문'."""
     kind, _, rest = g.partition(":")
-    return {"xbrl": "XBRL 수치", "text": "공시 본문", "guidance": "가이던스"}[kind] + f" {rest}"
+    if kind == "xbrl":
+        return f"{_NAME_KO.get(rest, rest)} XBRL 수치"
+    e = next((x for x in ev or [] if x["accession"] == rest), None)
+    if not e:
+        return {"text": "공시 본문", "guidance": "가이던스"}.get(kind, kind) + f" {rest}"
+    name = _NAME_KO.get(e["company"], e["company"])
+    return f"{name} {e['form']} 본문" if kind == "text" else f"{name} 가이던스"
 
 
 # ---------------------------------------------------------------- 수정안 (사실 전제만 고침)

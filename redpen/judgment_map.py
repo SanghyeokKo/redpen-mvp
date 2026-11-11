@@ -94,10 +94,9 @@ class JudgmentMap:
                 hits.append(sid)
                 paths[sid] = {"relation": rel, "relation_label": REL_LABEL[rel], "via_topics": via,
                               "from": src, "to": dst,
-                              "text": f"{self.store.name_ko(src)} 공시 →({REL_LABEL[rel]})→ "
-                                      f"{self.store.name_ko(dst)} · "
-                                      + " / ".join(f"{TOPICS[v].label} → {TOPICS[c['topic']].label}" if v != c["topic"]
-                                                   else TOPICS[v].label for v in via)}
+                              "text": _path_text(self.store.name_ko(src), self.store.name_ko(dst), rel,
+                                                 " / ".join(f"{TOPICS[v].label} → {TOPICS[c['topic']].label}"
+                                                            if v != c["topic"] else TOPICS[v].label for v in via))}
         return hits, paths
 
     def to_dot(self, event: dict, verdicts: dict, colors: dict, conflicts: list | None = None) -> str:
@@ -145,13 +144,23 @@ class JudgmentMap:
         for g in conflicts or []:
             for a, b in g["pairs"]:
                 da, db = self.claims[a]["doc_id"], self.claims[b]["doc_id"]
-                out.append(f'"doc_{da}":"{a}":e -> "doc_{db}":"{b}":e [dir=none color="#6A1B9A" style=dashed '
+                out.append(f'"doc_{da}":"{a}":e -> "doc_{db}":"{b}":e [dir=none color="#14213D" style=dashed '
                            f'penwidth=1.5 constraint=false];')
         out.append("}")
         return "\n".join(out)
 
     def _rel(self, src: str, t: str) -> str | None:
         return "sector" if t == "SECTOR" else self.store.relation_type(src, t)
+
+
+def _path_text(src: str, dst: str, rel: str, topics: str) -> str:
+    """영향 경로를 읽기 쉬운 문장으로: '마이크론 공시 → 고객사 엔비디아 (메모리·부품 가격 → 매출총이익률)'."""
+    if rel == "same":
+        return f"{src} 공시 → 같은 회사 {dst} 문장 ({topics})"
+    if rel == "sector":
+        return f"{src} 공시 → 섹터 전망 문장 ({topics})"
+    role = {"supplier_to_customer": "고객사", "customer_to_supplier": "공급사", "competitor": "경쟁사"}.get(rel, "")
+    return f"{src} 공시 → {role} {dst} ({topics})"
 
 
 def _esc(s: str) -> str:
