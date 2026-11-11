@@ -1,0 +1,29 @@
+# 모니터링 기업과 기업 관계표
+# 관계표는 공개 자료를 바탕으로 팀이 검수해 입력합니다 (MVP는 수기 입력, 본선에서 10-K 언급 추출 + 검수로 확장).
+monitored:
+  NVDA:
+    name: NVIDIA
+    name_ko: 엔비디아
+    cik: "0001045810"
+    role: 대상
+    aliases: [엔비디아, NVIDIA, Nvidia]
+    revenue_tag: Revenues
+  AMD:
+    name: AMD
+    name_ko: AMD
+    cik: "0000002488"
+    role: 경쟁사
+    aliases: [AMD]
+    revenue_tag: RevenueFromContractWithCustomerExcludingAssessedTax
+  MU:
+    name: Micron
+    name_ko: 마이크론
+    cik: "0000723125"
+    role: 공급사
+    aliases: [마이크론, Micron]
+    revenue_tag: RevenueFromContractWithCustomerExcludingAssessedTax
+
+relations:
+  - {source: MU, target: NVDA, type: supplier, note: "HBM·DRAM 메모리 공급"}
+  - {source: MU, target: AMD, type: supplier, note: "HBM·DRAM 메모리 공급"}
+  - {source: AMD, target: NVDA, type: competitor, note: "데이터센터 AI 가속기 경쟁"}

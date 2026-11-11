@@ -1,0 +1,29 @@
+{
+  "company": "MU",
+  "form": "8-K",
+  "items": "2.02,9.01",
+  "accession": "0000723125-26-000018",
+  "filed": "2026-09-30",
+  "period": "2026-09-03",
+  "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000018/a2026q4ex991-pressrelease.htm",
+  "section": "Exhibit 99.1 Press Release",
+  "note": "실적 발표 보도자료 발췌 (원문 그대로). Business Outlook은 원문 표를 행 단위로 옮김",
+  "paragraphs": [
+    {"sub": "Headline", "text": "AI-driven demand and strong operational execution position Micron for a record fiscal 2027"},
+    {"sub": "Release", "text": "BOISE, Idaho, September 30, 2026 – Micron Technology, Inc. (Nasdaq: MU) today announced results for its fourth quarter and full year of fiscal 2026, which ended September 3, 2026."},
+    {"sub": "Fiscal Q4 2026 Highlights", "text": "•Revenue of $54.23 billion versus $41.46 billion for the prior quarter and $11.32 billion for the same period last year"},
+    {"sub": "Fiscal Q4 2026 Highlights", "text": "•GAAP net income of $37.70 billion, or $32.87 per diluted share"},
+    {"sub": "Fiscal Q4 2026 Highlights", "text": "•Operating cash flow of $43.97 billion versus $25.39 billion for the prior quarter and $5.73 billion for the same period last year"},
+    {"sub": "Fiscal 2026 Highlights", "text": "•Revenue of $133.19 billion versus $37.38 billion for the prior year"},
+    {"sub": "Fiscal 2026 Highlights", "text": "•Operating cash flow of $89.68 billion versus $17.53 billion for the prior year"}
+  ],
+  "tables": [
+    {"sub": "Business Outlook (FQ1-27)", "kind": "guidance", "period": "FQ1-27", "rows": [
+      ["", "GAAP Outlook", "Non-GAAP Outlook"],
+      ["Revenue", "$61.5 billion ± $1.5 billion", "$61.5 billion ± $1.5 billion"],
+      ["Gross margin", "Approximately 85.95%", "Approximately 86.25%"],
+      ["Operating expenses", "Approximately $2.31 billion", "Approximately $2.06 billion"],
+      ["Diluted earnings per share", "$37.84 ± $1.00", "$38.15 ± $1.00"]
+    ]}
+  ]
+}

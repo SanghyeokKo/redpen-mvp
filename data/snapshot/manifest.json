@@ -1,0 +1,18 @@
+{
+  "name": "RedPen MVP 데모 스냅샷",
+  "retrieved_at": "2026-11-11 (KST 16:50경)",
+  "method": "SEC EDGAR 공개 API·원문을 브라우저로 직접 조회해 저장 (data.sec.gov submissions·companyfacts, www.sec.gov Archives)",
+  "license": "미국 SEC 공개 데이터 (SEC 공정 접근 정책 준수)",
+  "companies": ["NVDA", "AMD", "MU"],
+  "documents": [
+    {"key": "MU_10-K_0000723125-26-000023", "desc": "Micron FY2026 10-K, Item 7 MD&A 발췌"},
+    {"key": "MU_8-K_0000723125-26-000018", "desc": "Micron FY2026 4분기 실적 보도자료(Ex.99.1) 발췌, Business Outlook 표"},
+    {"key": "NVDA_10-Q_0001045810-26-000075", "desc": "NVIDIA FY2027 2분기 10-Q, Item 2 MD&A 발췌"},
+    {"key": "AMD_10-Q_0000002488-26-000191", "desc": "AMD 2026년 3분기 10-Q, Item 2 MD&A 발췌"}
+  ],
+  "xbrl_tags": ["Revenues / RevenueFromContractWithCustomerExcludingAssessedTax", "GrossProfit", "InventoryNet"],
+  "notes": [
+    "본문은 원문 문장을 그대로 옮긴 발췌이며, 일부 단락은 생략했습니다.",
+    "실시간 모드(scripts/build_snapshot.py)는 SEC_USER_AGENT 환경 변수를 설정한 뒤 같은 형식으로 스냅샷을 다시 만듭니다."
+  ]
+}
