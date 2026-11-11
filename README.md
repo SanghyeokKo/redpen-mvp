@@ -1,5 +1,7 @@
 # RedPen (레드펜) — 판단 빨간펜 AI Agent · MVP
 
+**데모:** https://mondai-redpen.streamlit.app
+
 > 새 공시 1건이 흔드는 기관 내 판단을 찾아, 근거와 함께 고치는 AI Agent
 > 「국부펀드 KIC, AI 에이전트 공모전」 팀 **MONDAI** (팀장 고상혁 · 팀원 노정환, 차형창)
 
